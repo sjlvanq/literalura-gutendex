@@ -7,33 +7,30 @@ import java.util.Objects;
 import java.util.Scanner;
 import java.util.stream.Collectors;
 
-import uno.lode.literalura.model.Book;
-import uno.lode.literalura.model.BookData;
-import uno.lode.literalura.model.LanguageCountProjection;
-import uno.lode.literalura.model.Person;
-import uno.lode.literalura.model.PersonType;
-import uno.lode.literalura.model.SearchResultsData;
-import uno.lode.literalura.repository.BookRepository;
-import uno.lode.literalura.repository.LanguageRepository;
-import uno.lode.literalura.repository.PersonRepository;
-import uno.lode.literalura.service.BookService;
+import uno.lode.literalura.model.*;
+import uno.lode.literalura.service.*;
 import uno.lode.literalura.service.client.BookApiClient;
 
 public class Main {
 	private final BookApiClient apiClient;
-	private final BookRepository bookRepository;
-	private final LanguageRepository languageRepository;
-	private final PersonRepository personRepository;
+	private final PersonService personService;
+	private final LanguageService languageService;
 	private final BookService bookService;
 
 	private final Scanner scanner;
 	
-	public Main(BookApiClient apiClient, BookRepository bookRepository, PersonRepository personRepository, BookService bookService, LanguageRepository languageRepository) {
+	public Main( 
+			BookApiClient apiClient,
+			BookService bookService,
+			PersonService personService,
+			LanguageService languageService
+			) {
 		this.apiClient = apiClient;
-		this.bookRepository = bookRepository;
-		this.languageRepository = languageRepository;
-		this.personRepository = personRepository;
+
 		this.bookService = bookService;
+		this.personService = personService;
+		this.languageService = languageService;
+
 		this.scanner = new Scanner(System.in);
 	}
 	
@@ -113,9 +110,10 @@ public class Main {
 				.map( bookData -> bookData.id())
 				.toList(); //.collect(Collectors.toList());
 		
-		List<Long> alreadySavedBookIds = bookRepository.findByBookIdIn(fetchedBookIds).stream()
-				.map(b -> b.getBookId())
-				.toList();
+		List<Long> alreadySavedBookIds = 
+				bookService.getBooksByExternalIds(fetchedBookIds).stream()
+					.map(b -> b.getBookId())
+					.toList();
 		
 		//searchResults.results().stream()
 		filteredSearchResults.stream()
@@ -194,19 +192,19 @@ public class Main {
 	}
 	
 	private void showSavedBooks() {
-		List<Book> savedBooks = bookRepository.findAll();
+		List<Book> savedBooks = bookService.getAllBooks();
 		showResultsList(savedBooks);
 	}
 	
 	private void showSavedPersons(PersonType type) {
-		List<Person> savedPerson = personRepository.findByType(type);
+		List<Person> savedPerson = personService.getPersonByType(type);
 		showResultsList(savedPerson);
 	}
 	
 	private void showAuthorsAliveInYear() {
 		System.out.print("Year: ");
 		int year = Integer.valueOf(scanner.nextLine().trim());
-		List<Person> aliveAuthors = personRepository.findAuthorsAliveInYear(year);
+		List<Person> aliveAuthors = personService.getAuthorsAliveInYear(year);
 		showResultsList(aliveAuthors);
 	}
 	
@@ -219,18 +217,19 @@ public class Main {
 	}
 	
 	private void showLanguageCounts() {
-		List<Integer> languageCounts = languageRepository.findLanguageCounts();
+		List<Integer> languageCounts = languageService.getLanguageCounts();
 		DoubleSummaryStatistics stat = languageCounts.stream()
 				.collect(Collectors.summarizingDouble(e->e));
 		System.out.println("Distinct Languages: " + stat.getCount());
 		System.out.println("Avg. books per language: " + stat.getAverage());
 		System.out.println("Max books per language: " + (int) stat.getMax() + 
-				" (" + languageRepository.findMostUsedLanguageCode() + ")");
+				" (" + languageService.getMostUsedLanguageCode() + ")");
 	}
 	
 	@SuppressWarnings("unused")
 	private void showLanguageCounts2() {
-		List<LanguageCountProjection> languageCounts = languageRepository.findLanguageCodesAndCounts();
+		List<LanguageCountProjection> languageCounts = languageService
+				.getLanguageCodesAndCounts();
 		if(languageCounts.isEmpty()) {return;}
 		//System.out.println(languageCounts);
 		DoubleSummaryStatistics stat = languageCounts.stream()
