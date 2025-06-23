@@ -7,6 +7,5 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public record SearchResultsData(
 		int count, 
-		List<BookData> results,
-		boolean isNew 
+		List<BookData> results
 ) {}
