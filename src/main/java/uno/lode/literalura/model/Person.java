@@ -1,5 +1,6 @@
 package uno.lode.literalura.model;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -13,14 +14,16 @@ import jakarta.persistence.UniqueConstraint;
 @Table(
 	name = "persons", 
 	uniqueConstraints = {
-			@UniqueConstraint(columnNames = { "name", "birthYear", "deathYear", "type" })
+			@UniqueConstraint(columnNames = { "name", "birth_year", "death_year", "type" })
 	})
 public class Person {
 	@Id
 	@GeneratedValue(strategy = GenerationType.SEQUENCE)
 	private Long id;
 	private String name;
+	@Column(name = "birth_year")
 	private int birthYear;
+	@Column(name = "death_year")
 	private int deathYear;
 
 	@Enumerated(EnumType.STRING)
