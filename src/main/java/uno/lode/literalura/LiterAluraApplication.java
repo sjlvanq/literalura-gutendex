@@ -6,7 +6,6 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 import uno.lode.literalura.main.Main;
-import uno.lode.literalura.repository.*;
 import uno.lode.literalura.service.*;
 import uno.lode.literalura.service.client.BookApiClient;
 
@@ -18,12 +17,6 @@ public class LiterAluraApplication implements CommandLineRunner {
 	PersonService personService;
 	@Autowired
 	LanguageService languageService;
-	@Autowired
-	BookRepository bookRepository;
-	@Autowired
-	PersonRepository personRepository;
-	@Autowired
-	LanguageRepository languageRepository;
 	@Autowired
 	BookApiClient apiClient;
 	
