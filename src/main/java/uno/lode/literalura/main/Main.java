@@ -7,9 +7,12 @@ import java.util.Objects;
 import java.util.Scanner;
 import java.util.stream.Collectors;
 
+import org.springframework.web.client.ResourceAccessException;
+
 import uno.lode.literalura.model.*;
 import uno.lode.literalura.service.*;
 import uno.lode.literalura.service.client.BookApiClient;
+import uno.lode.literalura.service.client.exception.BookApiClientException;
 
 public class Main {
 	private final BookApiClient apiClient;
@@ -90,7 +93,19 @@ public class Main {
 		
 		System.out.print("Search: ");
 		String query = scanner.nextLine().trim();
-		SearchResultsData searchResults = apiClient.findByTitleOrAuthor(query);
+
+		SearchResultsData searchResults = null;
+		try {
+			searchResults = apiClient.findByTitleOrAuthor(query);
+		}
+		catch (ResourceAccessException e) {
+			System.out.println("Net error");
+			return;
+		}
+		catch (BookApiClientException e){
+		    System.out.println(e.getMessage());
+			return;
+		}
 		
 		List<BookData> filteredSearchResults = null;
 		if(searchField == SearchField.TITLE) {

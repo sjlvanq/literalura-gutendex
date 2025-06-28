@@ -7,7 +7,8 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.http.client.JdkClientHttpRequestFactory;
 import org.springframework.web.client.RestClient;
 
-// https://certidevs.com/tutorial-spring-boot-rest-client-y-rest-template
+//https://docs.spring.io/spring-framework/reference/integration/rest-clients.html#rest-restclient
+//https://certidevs.com/tutorial-spring-boot-rest-client-y-rest-template
 
 @Configuration
 public class BookApiClientConfiguration {
