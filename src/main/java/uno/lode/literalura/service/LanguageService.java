@@ -2,15 +2,12 @@ package uno.lode.literalura.service;
 
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import uno.lode.literalura.model.*;
 import uno.lode.literalura.repository.LanguageRepository;
 
 @Service
 public class LanguageService {
-
-	@Autowired
 	private LanguageRepository languageRepository;
 
 	public LanguageService(LanguageRepository languageRepository) {
